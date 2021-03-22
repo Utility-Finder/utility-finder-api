@@ -7,7 +7,6 @@ from .models import db, Utility
 @app.route('/dummy', methods=['GET'])
 def dummy():
     u = Utility(
-        id=str(uuid.uuid4()),
         type=2,
         image_url='https://upload.wikimedia.org/wikipedia/commons/f/fe/Bubbler.jpg',
         lat=38.89151086127753,
