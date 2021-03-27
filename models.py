@@ -1,8 +1,7 @@
 import os
 import uuid
-from google.cloud.storage import bucket
 from sqlalchemy.dialects.postgresql import UUID
-from . import db
+from app import db
 
 
 class Utility(db.Model):

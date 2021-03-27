@@ -14,12 +14,11 @@ Utility Finder API
 
     pip install -r requirements.txt
 
-### Development
+## Development
 
-    # TODO: database
-
+    python create_db.py
     flask run
 
-### Production
+## Production
 
-TODO
+See [deploy instructions](DEPLOY.md)

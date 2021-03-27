@@ -2,8 +2,8 @@ import os
 import uuid
 from flask import request, jsonify
 from flask import current_app as app
-from .models import db, Utility
-from . import bucket
+from models import db, Utility
+from app import bucket
 
 
 def upload_to_gcp(id, request):
