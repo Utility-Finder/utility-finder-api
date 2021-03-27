@@ -16,8 +16,6 @@ Utility Finder API
 
 ### Development
 
-    # TODO: database
-
     flask run
 
 ### Production
