@@ -42,7 +42,7 @@ def list():
 
     radius = request.args.get('radius')
     if radius == None:
-        radius = 10
+        radius = 100
 
     try:
         radius = float(radius)
