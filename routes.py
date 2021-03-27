@@ -1,7 +1,20 @@
+import os
 import uuid
 from flask import request, jsonify
 from flask import current_app as app
 from .models import db, Utility
+from . import bucket
+
+
+def upload_to_gcp(id, request):
+    """Upload utility image to GCP cloud storage
+    """
+    img_url = f'static/{id}.png'
+    file = request.files['image']
+    file.save(img_url)
+    blob = bucket.blob(img_url)
+    blob.upload_from_filename(img_url)
+    os.remove(img_url)
 
 
 @app.route('/list', methods=['GET'])
@@ -21,15 +34,12 @@ def add_utility():
     lon = float(request.form['lon'])
     description = request.form['description']
 
-    # assume one image for now
-    img_url = f'static/{id}.png'
-    file = request.files['image']
-    file.save(img_url)
+    # Upload image to GCP
+    upload_to_gcp(id, request)
 
     u = Utility(
         id=id,
         type=0,
-        image_url=img_url,
         lat=lat,
         lon=lon,
         description=description,
@@ -52,8 +62,7 @@ def edit_utility(id):
         u.description = description
 
     if 'image' in request.files:
-        file = request.files['image']
-        file.save(f'static/{u.id}.png')
+        upload_to_gcp(id, request)
 
     db.session.commit()
 

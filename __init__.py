@@ -3,11 +3,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
+from google.cloud import storage
 
 load_dotenv()
 
 db = SQLAlchemy()
 
+client = storage.Client()
+bucket = client.get_bucket(os.environ.get('GCLOUD_BUCKET_ID'))
 
 def create_app():
     app = Flask(__name__)
