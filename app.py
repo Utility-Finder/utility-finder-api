@@ -31,7 +31,6 @@ def create_app():
 
     with app.app_context():
         import routes
-        #db.create_all()
         CORS(app)
         return app
 
