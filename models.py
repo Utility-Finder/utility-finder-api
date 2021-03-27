@@ -12,4 +12,14 @@ class Utility(db.Model):
     lon = db.Column(db.Float(), nullable=False)
     image_url = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    rating = db.Column(db.Integer(), nullable=False)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'lat': self.lat,
+            'lon': self.lon,
+            'imageURL': self.image_url,
+            'description': self.description,
+            'rating': 0,  # TODO: calcualte rating
+        }

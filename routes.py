@@ -4,44 +4,13 @@ from flask import current_app as app
 from .models import db, Utility
 
 
-@app.route('/dummy', methods=['GET'])
-def dummy():
-    u = Utility(
-        type=2,
-        image_url='https://upload.wikimedia.org/wikipedia/commons/f/fe/Bubbler.jpg',
-        lat=38.89151086127753,
-        lon=-77.02606859385605,
-        description='Nice and warm',
-        rating=4.35,
-    )
-    db.session.add(u)
-    db.session.commit()
-    return jsonify({})
-
-
 @app.route('/list', methods=['GET'])
 def list():
-    # TODO: sending back dummy data for now
-    return jsonify([
-        {
-            'id': 'abcde12345',
-            'type': 2,
-            'imageURL': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Bubbler.jpg',
-            'lat': 38.89151086127753,
-            'lon': -77.02606859385605,
-            'description': 'Nice and warm',
-            'rating': 4.35,
-        },
-        {
-            'id': 'fghijk67890s',
-            'type': 1,
-            'imageURL': 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Bubbler.jpg',
-            'lat': 38.993452,
-            'lon': -77.014709,
-            'description': 'second one',
-            'rating': 1.23,
-        },
-    ]), 200
+
+    # TODO: do geo query
+    utilities = Utility.query.all()
+
+    return jsonify([u.to_json() for u in utilities]), 200
 
 
 @app.route('/utility', methods=['POST'])
@@ -52,27 +21,43 @@ def add_utility():
     lon = float(request.form['lon'])
     description = request.form['description']
 
+    # assume one image for now
+    img_url = f'static/{id}.png'
     file = request.files['image']
-    file.save(f'static/{id}.png')  # assume one image for now
+    file.save(img_url)
 
-    # TODO: save data into db
-    utility = {
-        'id': id,
-        'lat': lat,
-        'lon': lon,
-        'description': description,
-        'imageURL': f'static/{id}.png',
-    }
+    u = Utility(
+        id=id,
+        type=0,
+        image_url=img_url,
+        lat=lat,
+        lon=lon,
+        description=description,
+    )
+    db.session.add(u)
+    db.session.commit()
 
-    print(utility)
-
-    return jsonify(utility), 200
+    return jsonify(u.to_json()), 200
 
 
 @app.route('/utility/<id>', methods=['PUT'])
 def edit_utility(id):
-    # TODO
-    return jsonify(f'Edit utility {id}'), 200
+
+    u = Utility.query.get(id)
+    if u == None:
+        return jsonify([]), 404
+
+    if 'description' in request.form:
+        description = request.form['description']
+        u.description = description
+
+    if 'image' in request.files:
+        file = request.files['image']
+        file.save(f'static/{u.id}.png')
+
+    db.session.commit()
+
+    return jsonify(u.to_json()), 200
 
 
 @app.route('/utility/<id>/rate', methods=['POST'])
