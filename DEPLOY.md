@@ -26,6 +26,7 @@
   
   - Set up Postgres
     - Add [Heroku Postgres](https://www.heroku.com/postgres) to app.
+    - Create `cube` and `earthdistance` extensions to database via pgAdmin or pgsql
   
   - Set up environment
     - Create config var with key `GOOGLE_CREDENTIALS` and copy the contents of `service_creds.json` as value.
