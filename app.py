@@ -17,14 +17,21 @@ def create_app():
     app = Flask(__name__)
 
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1) # this is a hack
+
+    # Fixes postgres uri deprecation in sqlalchemy
+    # https://help.heroku.com/ZKNTJQSK/why-is-sqlalchemy-1-4-x-not-connecting-to-heroku-postgres
+    uri = os.getenv("DATABASE_URL")
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
     with app.app_context():
         import routes
-        db.create_all()
+        #db.create_all()
         CORS(app)
         return app
 
